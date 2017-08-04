@@ -5,9 +5,19 @@
  */
 package ControleEmocional_interfaces;
 
+import ControleEmocional_classes.Usuario;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.PrintWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
@@ -39,8 +49,8 @@ public class ControleEmocional_Login extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jTextField1 = new javax.swing.JTextField();
-        jPasswordField1 = new javax.swing.JPasswordField();
+        nome = new javax.swing.JTextField();
+        senha = new javax.swing.JPasswordField();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
@@ -50,14 +60,14 @@ public class ControleEmocional_Login extends javax.swing.JFrame {
         setTitle("Tela de login");
         setResizable(false);
 
-        jTextField1.setFont(new java.awt.Font("Trebuchet MS", 1, 18)); // NOI18N
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        nome.setFont(new java.awt.Font("Trebuchet MS", 1, 18)); // NOI18N
+        nome.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                nomeActionPerformed(evt);
             }
         });
 
-        jPasswordField1.setFont(new java.awt.Font("Trebuchet MS", 1, 18)); // NOI18N
+        senha.setFont(new java.awt.Font("Trebuchet MS", 1, 18)); // NOI18N
 
         jButton1.setFont(new java.awt.Font("Trebuchet MS", 1, 18)); // NOI18N
         jButton1.setText("Entrar");
@@ -94,8 +104,8 @@ public class ControleEmocional_Login extends javax.swing.JFrame {
                     .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(nome, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(senha, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(358, Short.MAX_VALUE)
@@ -113,10 +123,10 @@ public class ControleEmocional_Login extends javax.swing.JFrame {
                 .addGap(250, 250, 250)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jTextField1))
+                    .addComponent(nome))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(senha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(4, 4, 4)))
@@ -130,14 +140,44 @@ public class ControleEmocional_Login extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void nomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nomeActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_nomeActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        new JFrameLoginOk().setVisible(true);
-        this.dispose();
+        
+        String name = nome.getText();
+        
+        String lugar = "src/Data/"+name+".ser";
+        
+        ObjectInputStream objectIn;
+        Usuario login;
+        int auxiliar=0;
+        try {
+            objectIn = new ObjectInputStream(new BufferedInputStream(new FileInputStream(lugar)));
+            login = (Usuario)objectIn.readObject();
+            objectIn.close();
+            if(login.getNome().equals(name) && login.getSenha().equals(senha.getText())){
+                auxiliar++;
+                try (FileWriter arq2 = new FileWriter("src/Data/UsuarioAtual.txt")) {
+                    PrintWriter gravarArq = new PrintWriter(arq2);
+
+                    gravarArq.printf("%s", login.getNome());
+
+                    arq2.close();
+                }
+            }            
+        }catch(IOException | ClassNotFoundException e){
+            JOptionPane.showMessageDialog(null,"Usuário ou senha errados!! Já possuí cadastrado? ","ERRO",JOptionPane.ERROR_MESSAGE);
+            nome.setText("");
+            senha.setText("");
+        }
+        
+        if(auxiliar>0){
+            new JFrameLoginOk().setVisible(true);
+            this.dispose();
+        }        
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -167,7 +207,7 @@ public class ControleEmocional_Login extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JPasswordField jPasswordField1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField nome;
+    private javax.swing.JPasswordField senha;
     // End of variables declaration//GEN-END:variables
 }

@@ -5,7 +5,11 @@
  */
 package ControleEmocional_interfaces;
 
+import ControleEmocional_classes.EmocaoRisco;
+import ControleEmocional_classificadores.ClassificadorEmocional;
 import java.awt.Color;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
@@ -21,27 +25,29 @@ public class JFrameMedicao extends javax.swing.JFrame {
     /**
      * Creates new form JFrameMedicao
      */
+    private int auxiliar,contador=0;
+
     public JFrameMedicao() {
         initComponents();
-        
+
         ((JPanel) getContentPane()).setOpaque(false);
         ImageIcon um = new ImageIcon(this.getClass().getResource("/Imagens/11.jpg"));
         JLabel fundo = new JLabel();
         fundo.setIcon(um);
         getLayeredPane().add(fundo, JLayeredPane.FRAME_CONTENT_LAYER);
         fundo.setBounds(0, 0, um.getIconWidth(), um.getIconHeight());
-        
+
         jButton2.setBackground(Color.yellow);
         jButton2.setText("Analise sua medição!");
-        
-        if(batimentoEstado==true){
+        auxiliar = 0;
+        /*if(batimentoEstado==true){
             jButton2.setBackground(Color.red);
             jButton2.setText("Possível estado de risco!");
         }else{
             jButton2.setBackground(Color.green);
             jButton2.setText("Sua saúde está ótima!");
-        }
-                       
+        }*/
+
     }
 
     /**
@@ -55,14 +61,28 @@ public class JFrameMedicao extends javax.swing.JFrame {
 
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
 
         jButton1.setFont(new java.awt.Font("Trebuchet MS", 1, 18)); // NOI18N
         jButton1.setText("Analisar medição");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
-        jButton2.setFont(new java.awt.Font("Trebuchet MS", 1, 48)); // NOI18N
+        jButton2.setFont(new java.awt.Font("Trebuchet MS", 1, 24)); // NOI18N
+
+        jButton3.setFont(new java.awt.Font("Trebuchet MS", 1, 18)); // NOI18N
+        jButton3.setText("Sair");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -74,21 +94,63 @@ public class JFrameMedicao extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(69, Short.MAX_VALUE)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 666, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jButton3)
+                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 666, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(65, 65, 65))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(79, Short.MAX_VALUE)
+                .addContainerGap(71, Short.MAX_VALUE)
                 .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 399, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(34, 34, 34)
                 .addComponent(jButton1)
-                .addGap(59, 59, 59))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton3)
+                .addGap(30, 30, 30))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        //System.out.println("Medindo ta ta ta ta ta ta rarara");
+        EmocaoRisco recebido = null;
+        contador++;
+        
+        if (auxiliar == 0) {
+            ClassificadorEmocional classificador = new ClassificadorEmocional();
+
+            try {
+                recebido = classificador.begin();
+                if (recebido.getRisco().equals("Seu nível de batimentos por minuto está alto!")) {
+                    jButton2.setBackground(Color.red);
+                } else {
+                    jButton2.setBackground(Color.green);
+                }
+                jButton2.setText(recebido.getEmocao() + "! " + recebido.getRisco());
+
+            } catch (Exception ex) {
+                Logger.getLogger(JFrameMedicao.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            auxiliar++;
+        } else {
+            JOptionPane.showMessageDialog(null, "A medição está sendo analisada isto pode demorar vários minutos. Por favor aguarde!");
+        }
+        
+        if(contador>1){
+            jButton1.setText("Voltar a tela anterior para fazer o monitoramento");
+            new JFrameMedicao_1().setVisible(true);
+            this.dispose();
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        System.exit(0);
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -116,23 +178,21 @@ public class JFrameMedicao extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(JFrameMedicao.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-        
+
         /* Create and display the form */
-        
-        JOptionPane.showMessageDialog(null, "Após fazer a medição por 5 minutos clique em 'Analisar medição'");
-        
+        //JOptionPane.showMessageDialog(null, "Após fazer a medição por 5 minutos clique em 'Analisar medição'");
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new JFrameMedicao().setVisible(true);
             }
         });
-        
-        
+
     }
 
     private boolean batimentoEstado = true;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     // End of variables declaration//GEN-END:variables
 }

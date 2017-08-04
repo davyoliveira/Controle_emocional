@@ -5,9 +5,18 @@
  */
 package ControleEmocional_interfaces;
 
+import ControleEmocional_classes.Usuario;
+import java.io.BufferedOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
@@ -73,7 +82,6 @@ public class JFrameCadastro extends javax.swing.JDialog {
         jButton1 = new javax.swing.JButton();
         jLabel8 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Tela de Cadastro");
 
         jLabel1.setFont(new java.awt.Font("Trebuchet MS", 1, 18)); // NOI18N
@@ -83,7 +91,7 @@ public class JFrameCadastro extends javax.swing.JDialog {
         jLabel2.setText("Qual é o seu nome? ");
 
         jLabel3.setFont(new java.awt.Font("Trebuchet MS", 1, 18)); // NOI18N
-        jLabel3.setText("Escolha uma senha de 6 caracteres:");
+        jLabel3.setText("Escolha uma senha:");
 
         jLabel4.setFont(new java.awt.Font("Trebuchet MS", 1, 18)); // NOI18N
         jLabel4.setText("Você possuí problemas do coração?");
@@ -120,7 +128,7 @@ public class JFrameCadastro extends javax.swing.JDialog {
         });
 
         jLabel8.setFont(new java.awt.Font("Trebuchet MS", 1, 18)); // NOI18N
-        jLabel8.setText("(Não há necessidade de ser completo)");
+        jLabel8.setText("(Sem espaços exemplo: DavyOliveira)");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -203,7 +211,70 @@ public class JFrameCadastro extends javax.swing.JDialog {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        this.dispose();
+        int t1=0,t2=0,t3=0,t4=0,t5=0;
+        int aux=0,aux1=0,aux2=0,aux3=0;
+        boolean coracao;
+        char sexo;
+        int idade;
+        if(!jTextField1.getText().equals("")){
+            t1++;
+        }
+        if(!jTextField2.getText().equals("")){
+            t2++;
+        }
+        if(jRadioButton1.isSelected() ==true || jRadioButton2.isSelected() ==true){
+            t3++;
+            if(jRadioButton1.isSelected())
+               aux2++;
+            else
+               aux3++;
+        }
+        if(!jTextField3.getText().equals("")){
+            t4++;
+        }
+        if(jRadioButton3.isSelected() ==true || jRadioButton4.isSelected() ==true){
+            t5++;
+            if(jRadioButton3.isSelected())
+               aux++;
+            else
+               aux1++;
+        }
+        if(t1>0 && t2>0 && t3>0 && t4>0 && t5>0){
+            if(aux2>0){
+                coracao = true;
+            }else{
+                coracao = false;
+            }
+            if(aux>0){
+                sexo = 'M';
+            }else{
+                sexo = 'F';
+            }
+            idade = Integer.parseInt(jTextField3.getText());
+            Usuario novoUsu = new Usuario(jTextField1.getText(),jTextField2.getText(),coracao,idade,sexo);
+            
+            ObjectOutputStream objectOut;
+            
+            String lugar = "src/Data/"+jTextField1.getText()+".ser";
+            
+            System.out.println(lugar);
+            try {
+                objectOut = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(lugar)));
+                objectOut.writeObject(novoUsu);
+                objectOut.close();
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(JFrameCadastro.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(JFrameCadastro.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            JOptionPane.showMessageDialog(null,"Usuário cadastrado com sucesso");
+            
+            this.dispose();
+        }else{
+            JOptionPane.showMessageDialog(null,"Todos os dados são obrigatórios");
+        }
+        
     }//GEN-LAST:event_jButton1ActionPerformed
   
 
